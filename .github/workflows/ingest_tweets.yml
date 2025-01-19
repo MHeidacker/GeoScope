@@ -6,7 +6,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 * * * *"  # Runs every hour (adjust as needed)
+    - cron: "0 * * * *"  # Runs every hour
 
 jobs:
   ingest:
@@ -31,27 +31,32 @@ jobs:
           pip install -r requirements.txt
 
       # Run the ingestion script
-      - name: Run ingest_tweets.py
+      - name: Fetch Tweets with ingest_tweets.py
         env:
-          BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}  # Use a GitHub secret
+          BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
         run: |
           source venv/bin/activate
           python scripts/ingest_tweets.py
 
-      - name: Send raw_tweets.json to Foundry
+      # Send raw_tweets.json to Foundry
+      - name: Send Tweets to Foundry
         env:
-          TWEET_FOUNDRY_TOKEN: ${{ secrets.TWEET_FOUNDRY_TOKEN }}  # Use a GitHub secret
+          TWEET_FOUNDRY_TOKEN: ${{ secrets.TWEET_FOUNDRY_TOKEN }}
         run: |
           source venv/bin/activate
           python scripts/send_tweets.py
 
-      # Commit and push the output
-      - name: Commit and push output
+      # Commit and push the output if raw_tweets.json was updated
+      - name: Commit and push raw_tweets.json
         run: |
-          git config --global user.name "MHeidacker"
-          git config --global user.email "max@heidacker.ai"
-          git add raw_tweets.json
-          git commit -m "Update raw_tweets.json"
-          git push
+          if [ -s raw_tweets.json ]; then
+            git config --global user.name "MHeidacker"
+            git config --global user.email "max@heidacker.ai"
+            git add raw_tweets.json
+            git commit -m "Update raw_tweets.json"
+            git push
+          else
+            echo "raw_tweets.json is empty or unchanged. Skipping commit."
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

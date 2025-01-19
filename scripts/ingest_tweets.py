@@ -3,7 +3,6 @@ import json
 import os
 
 # Configuration
-
 BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 
 url = "https://api.twitter.com/2/tweets/search/recent"
@@ -24,8 +23,14 @@ def fetch_tweets():
         print(f"Error during API call: {e}")
         return []
 
-if __name__ == "__main__":
-    tweets = fetch_tweets()
+def save_tweets(tweets):
+    if not tweets:
+        print("No tweets fetched. raw_tweets.json will not be updated.")
+        return
     with open("raw_tweets.json", "w") as f:
         json.dump(tweets, f, indent=4)
-    print("Tweets saved to raw_tweets.json")
+    print(f"{len(tweets)} tweets saved to raw_tweets.json.")
+
+if __name__ == "__main__":
+    tweets = fetch_tweets()
+    save_tweets(tweets)
