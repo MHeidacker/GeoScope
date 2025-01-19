@@ -21,9 +21,17 @@ if not isinstance(raw_tweets, list):
     print("Error: raw_tweets.json must contain a list of JSON objects.")
     exit(1)
 
-# Prepare data for Foundry streaming API
-# Foundry expects a list of rows with the "value" field containing the data
-stream_data = [{"value": tweet} for tweet in raw_tweets]
+# Prepare data to match the required schema
+stream_data = []
+for tweet in raw_tweets:
+    formatted_tweet = {
+        "edit_history_tweet_ids": tweet.get("edit_history_tweet_ids", ["value"]),
+        "id": tweet.get("id", "value"),
+        "text": tweet.get("text", "value"),
+        "author_id": tweet.get("author_id", "value"),
+        "created_at": tweet.get("created_at", "value"),
+    }
+    stream_data.append({"value": formatted_tweet})
 
 # Define Foundry streaming API endpoint
 post_uri = "https://heidacker.usw-3.palantirfoundry.com/stream-proxy/api/streams/ri.foundry.main.dataset.b791758c-9239-4ecb-ac75-6fbaca864bf4/views/ri.foundry-streaming.main.view.54406e4b-71ae-4ede-88b4-38662b962ad6/jsonRecords"
