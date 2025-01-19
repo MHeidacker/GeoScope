@@ -5,7 +5,7 @@ import logging
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,  # Change to DEBUG for more verbose logging
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler("tweet_streaming.log"),
@@ -13,7 +13,7 @@ logging.basicConfig(
     ]
 )
 
-# Load Foundry token from environment variable
+# Load Foundry token
 FOUNDRY_TOKEN = os.getenv("TWEET_FOUNDRY_TOKEN")
 
 if not FOUNDRY_TOKEN:

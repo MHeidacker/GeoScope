@@ -6,7 +6,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 * * * *"  # Runs every hour
+    - cron: "0 0 * * *"  # Runs every day
 
 jobs:
   ingest:
@@ -53,10 +53,15 @@ jobs:
             git config --global user.name "MHeidacker"
             git config --global user.email "max@heidacker.ai"
             git add raw_tweets.json
-            git commit -m "Update raw_tweets.json"
-            git push
+            if git diff --cached --quiet; then
+              echo "No changes to raw_tweets.json. Skipping commit."
+            else
+              git commit -m "Update raw_tweets.json"
+              git push
+            fi
           else
             echo "raw_tweets.json is empty or unchanged. Skipping commit."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
