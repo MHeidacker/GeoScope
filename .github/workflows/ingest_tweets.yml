@@ -38,6 +38,13 @@ jobs:
           source venv/bin/activate
           python scripts/ingest_tweets.py
 
+      - name: Send raw_tweets.json to Foundry
+        env:
+          TWEET_FOUNDRY_TOKEN: ${{ secrets.TWEET_FOUNDRY_TOKEN }}  # Use a GitHub secret
+        run: |
+          source venv/bin/activate
+          python scripts/send_tweets.py
+
       # Commit and push the output
       - name: Commit and push output
         run: |
