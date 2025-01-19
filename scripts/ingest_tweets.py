@@ -1,8 +1,11 @@
 import requests
 import json
+import os
 
 # Configuration
-BEARER_TOKEN = "your_twitter_bearer_token"
+
+BEARER_TOKEN = os.getenv("BEARER_TOKEN")
+
 url = "https://api.twitter.com/2/tweets/search/recent"
 params = {
     "query": "(China OR Taiwan OR Indo-Pacific OR South China Sea) (movement OR events OR activity OR military OR navy) -is:retweet lang:en",
