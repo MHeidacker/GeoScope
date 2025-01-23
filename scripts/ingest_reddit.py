@@ -7,39 +7,36 @@ from datetime import datetime, date
 client_id = os.getenv("REDDIT_CLIENT_ID")
 client_secret = os.getenv("REDDIT_CLIENT_SECRET")
 user_agent = os.getenv("REDDIT_USER_AGENT")
-# username = os.getenv("REDDIT_USERNAME")
-# password = os.getenv("REDDIT_PASSWORD")
 
 reddit = praw.Reddit(
     client_id=client_id,
     client_secret=client_secret,
     user_agent=user_agent,
-    # username=username,
-    # password=password
 )
 
-def fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20):
+def fetch_comments_today(keywords, subreddits, limit=5, comment_limit=10):
     print(f"Searching for posts containing: {keywords}")
     results = []
     today_date = date.today()
 
     for subreddit in subreddits:
         print(f"\nSearching in r/{subreddit}...")
-        # Search for posts in the subreddit
-        for submission in reddit.subreddit(subreddit).search(keywords, limit=limit):
+        # Search for popular posts in the subreddit
+        for submission in reddit.subreddit(subreddit).search(
+            keywords, limit=limit, sort='top', time_filter='day'
+        ):
             submission.comments.replace_more(limit=0)  # Flatten comment tree
+            submission.comments.sort(key=lambda comment: comment.created_utc, reverse=True)  # Sort by newest comments
             
             for comment in submission.comments[:comment_limit]:  # Limit number of comments per post
                 try:
                     # Convert the comment's UTC timestamp to a date
                     comment_datetime = datetime.utcfromtimestamp(comment.created_utc)
                     comment_date = comment_datetime.date()
-                    
-                    # Log the comment's date for debugging
-                    print(f"Comment ID: {comment.id}, Created Date: {comment_date}")
 
                     # Check if the comment was created today
                     if comment_date == today_date:
+                        print(f"Comment ID: {comment.id}, Created Date: {comment_date}")
                         results.append({
                             "id": comment.id,  # Unique comment ID
                             "body": comment.body,  # Comment text
@@ -54,10 +51,10 @@ def fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20):
 if __name__ == "__main__":
     # Define keywords and target subreddits
     keywords = "Indo-Pacific OR China OR Taiwan"
-    subreddits = ["worldnews", "geopolitics", "china", "taiwan", "politics"]
+    subreddits = ["worldnews", "news", "geopolitics", "china", "taiwan", "politics"]
 
     # Fetch comments from today
-    comments = fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20)
+    comments = fetch_comments_today(keywords, subreddits, limit=5, comment_limit=10)
 
     # Save results to JSON file
     output_file = "reddit_comments.json"
