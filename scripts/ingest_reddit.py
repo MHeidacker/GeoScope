@@ -18,7 +18,7 @@ reddit = praw.Reddit(
     # password=password
 )
 
-def fetch_comments(keywords, subreddits, limit=50, comment_limit=20):
+def fetch_comments(keywords, subreddits, limit=25, comment_limit=20):
     print(f"Searching for posts containing: {keywords}")
     results = []
     for subreddit in subreddits:
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     subreddits = ["worldnews", "geopolitics", "china", "taiwan", "politics"]
 
     # Fetch comments
-    comments = fetch_comments(keywords, subreddits, limit=50, comment_limit=20)
+    comments = fetch_comments(keywords, subreddits, limit=25, comment_limit=20)
 
     # Save results to JSON file
     output_file = "reddit_comments.json"
