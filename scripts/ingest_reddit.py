@@ -18,7 +18,7 @@ def fetch_comments_today(keywords, subreddits, limit=10, comment_limit=10):
     print(f"Searching for posts containing: {keywords}")
     results = []
     today_date = date.today()
-    yesterday_date = today_date.replace(day=today_date.day - 1)
+    yesterday_date = today_date.replace(day=today_date.day - 2)
 
     for subreddit in subreddits:
         print(f"\nSearching in r/{subreddit}...")
