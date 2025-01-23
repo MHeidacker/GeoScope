@@ -3,7 +3,7 @@ name: Ingest Data
 # Run this workflow on pushes to the repository or on a schedule
 on:
   schedule:
-    - cron: "0 0 * * *"  # Runs every day
+    - cron: "0 7 * * *"  # Runs every day
 
 jobs:
   ingest:
