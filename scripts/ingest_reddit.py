@@ -45,8 +45,8 @@ def fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20):
 
 if __name__ == "__main__":
     # Define keywords and target subreddits
-    keywords = "Indo-Pacific OR China OR Taiwan"
-    subreddits = ["worldnews", "geopolitics", "china", "taiwan", "politics"]
+    keywords = "Indo-Pacific OR China OR Taiwan OR South China Sea OR navy"
+    subreddits = ["worldnews", "news", "geopolitics", "china", "taiwan", "politics"]
 
     # Fetch comments from today
     comments = fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20)
