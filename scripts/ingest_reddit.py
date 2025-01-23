@@ -18,13 +18,13 @@ def fetch_comments_today(keywords, subreddits, limit=10, comment_limit=10):
     print(f"Searching for posts containing: {keywords}")
     results = []
     today_date = date.today()
-    yesterday_date = today_date.replace(day=today_date.day - 3)
+    yesterday_date = today_date.replace(day=today_date.day - 1)
 
     for subreddit in subreddits:
         print(f"\nSearching in r/{subreddit}...")
         # Search for popular posts in the subreddit
         for submission in reddit.subreddit(subreddit).search(
-            keywords, limit=limit, sort='top', time_filter='week'
+            keywords, limit=limit, sort='top', time_filter='day'
         ):
             submission.comments.replace_more(limit=0)  # Flatten comment tree
             comments_list = list(submission.comments)  # Convert to list of comments
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     subreddits = ["worldnews", "news", "geopolitics", "china", "taiwan", "politics"]
 
     # Fetch comments from today
-    comments = fetch_comments_today(keywords, subreddits, limit=10, comment_limit=30)
+    comments = fetch_comments_today(keywords, subreddits, limit=10, comment_limit=15)
 
     # Save results to JSON file
     output_file = "reddit_comments.json"
