@@ -49,7 +49,7 @@ if __name__ == "__main__":
     subreddits = ["worldnews", "news", "geopolitics", "china", "taiwan", "politics"]
 
     # Fetch comments from today
-    comments = fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20)
+    comments = fetch_comments_today(keywords, subreddits, limit=20, comment_limit=10)
 
     # Save results to JSON file
     output_file = "reddit_comments.json"
