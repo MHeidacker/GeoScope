@@ -7,15 +7,15 @@ from datetime import datetime
 client_id = os.getenv("REDDIT_CLIENT_ID")
 client_secret = os.getenv("REDDIT_CLIENT_SECRET")
 user_agent = os.getenv("REDDIT_USER_AGENT")
-username = os.getenv("REDDIT_USERNAME")
-password = os.getenv("REDDIT_PASSWORD")
+# username = os.getenv("REDDIT_USERNAME")
+# password = os.getenv("REDDIT_PASSWORD")
 
 reddit = praw.Reddit(
     client_id=client_id,
     client_secret=client_secret,
     user_agent=user_agent,
-    username=username,
-    password=password
+    # username=username,
+    # password=password
 )
 
 def fetch_comments(keywords, subreddits, limit=50, comment_limit=20):
