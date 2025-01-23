@@ -18,7 +18,7 @@ reddit = praw.Reddit(
     # password=password
 )
 
-def fetch_comments_today(keywords, subreddits, limit=25, comment_limit=20):
+def fetch_comments_today(keywords, subreddits, limit=20, comment_limit=10):
     print(f"Searching for posts containing: {keywords}")
     results = []
     today_date = date.today()
