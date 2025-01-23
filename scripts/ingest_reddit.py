@@ -14,7 +14,7 @@ reddit = praw.Reddit(
     user_agent=user_agent,
 )
 
-def fetch_comments_today(keywords, subreddits, limit=6, comment_limit=15):
+def fetch_comments_today(keywords, subreddits, limit=10, comment_limit=10):
     print(f"Searching for posts containing: {keywords}")
     results = []
     today_date = date.today()
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     subreddits = ["worldnews", "news", "geopolitics", "china", "taiwan", "politics"]
 
     # Fetch comments from today
-    comments = fetch_comments_today(keywords, subreddits, limit=6, comment_limit=15)
+    comments = fetch_comments_today(keywords, subreddits, limit=10, comment_limit=10)
 
     # Save results to JSON file
     output_file = "reddit_comments.json"
