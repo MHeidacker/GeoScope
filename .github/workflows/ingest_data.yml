@@ -38,13 +38,27 @@ jobs:
           source venv/bin/activate
           python scripts/ingest_tweets.py
 
+      - name: Check if raw_tweets.json exists
+        id: check_file
+        run: |
+          if [ -f "raw_tweets.json" ]; then
+            echo "file_exists=true" >> $GITHUB_ENV
+          else
+            echo "file_exists=false" >> $GITHUB_ENV
+          fi
+
       # Send raw_tweets.json to Foundry
       - name: Send Tweets to Foundry
+        if: env.file_exists == 'true'
         env:
           TWEET_FOUNDRY_TOKEN: ${{ secrets.TWEET_FOUNDRY_TOKEN }}
         run: |
           source venv/bin/activate
           python scripts/send_tweets.py
+
+      - name: Skip step
+        if: env.file_exists == 'false'
+        run: echo "No tweets fetched. Skipping processing step."
 
       # Run the Reddit ingestion script
       - name: Fetch Reddit Comments with ingest_reddit.py
