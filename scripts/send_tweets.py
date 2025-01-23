@@ -20,7 +20,7 @@ if not FOUNDRY_TOKEN:
     logging.error("Foundry token is not set. Please set the TWEET_FOUNDRY_TOKEN environment variable.")
     exit(1)
 
-# Path to your raw_tweets.json file
+# Path to raw_tweets.json file
 raw_tweets_file = "raw_tweets.json"
 
 # Load raw_tweets.json file

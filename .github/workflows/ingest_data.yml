@@ -1,0 +1,105 @@
+name: Ingest Data
+
+# Run this workflow on pushes to the repository or on a schedule
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"  # Runs every day
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9  # Adjust version as needed
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      # Run the Twitter ingestion script
+      - name: Fetch Tweets with ingest_tweets.py
+        env:
+          BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+        run: |
+          source venv/bin/activate
+          python scripts/ingest_tweets.py
+
+      # Send raw_tweets.json to Foundry
+      - name: Send Tweets to Foundry
+        env:
+          TWEET_FOUNDRY_TOKEN: ${{ secrets.TWEET_FOUNDRY_TOKEN }}
+        run: |
+          source venv/bin/activate
+          python scripts/send_tweets.py
+
+      # Run the Reddit ingestion script
+      - name: Fetch Reddit Comments with ingest_reddit.py
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+        run: |
+          source venv/bin/activate
+          python scripts/ingest_reddit.py
+
+      # Send reddit_comments.json to Foundry
+      - name: Send Reddit Comments to Foundry
+        env:
+          REDDIT_FOUNDRY_TOKEN: ${{ secrets.REDDIT_FOUNDRY_TOKEN }}
+        run: |
+          source venv/bin/activate
+          python scripts/send_reddit.py
+
+      # Commit and push the output if raw_tweets.json was updated
+      - name: Commit and push raw_tweets.json
+        run: |
+          if [ -s raw_tweets.json ]; then
+            git config --global user.name "MHeidacker"
+            git config --global user.email "max@heidacker.ai"
+            git add raw_tweets.json
+            if git diff --cached --quiet; then
+              echo "No changes to raw_tweets.json. Skipping commit."
+            else
+              git commit -m "Update raw_tweets.json"
+              git push
+            fi
+          else
+            echo "raw_tweets.json is empty or unchanged. Skipping commit."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Commit and push the output if reddit_comments.json was updated
+      - name: Commit and push reddit_comments.json
+        run: |
+          if [ -s reddit_comments.json ]; then
+            git config --global user.name "MHeidacker"
+            git config --global user.email "max@heidacker.ai"
+            git add reddit_comments.json
+            if git diff --cached --quiet; then
+              echo "No changes to reddit_comments.json. Skipping commit."
+            else
+              git commit -m "Update reddit_comments.json"
+              git push
+            fi
+          else
+            echo "reddit_comments.json is empty or unchanged. Skipping commit."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
