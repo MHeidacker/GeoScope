@@ -26,9 +26,10 @@ def fetch_comments_today(keywords, subreddits, limit=5, comment_limit=10):
             keywords, limit=limit, sort='top', time_filter='day'
         ):
             submission.comments.replace_more(limit=0)  # Flatten comment tree
-            submission.comments.sort(key=lambda comment: comment.created_utc, reverse=True)  # Sort by newest comments
+            comments_list = list(submission.comments)  # Convert to list of comments
+            comments_list.sort(key=lambda comment: comment.created_utc, reverse=True)  # Sort by newest comments
             
-            for comment in submission.comments[:comment_limit]:  # Limit number of comments per post
+            for comment in comments_list[:comment_limit]:  # Limit number of comments per post
                 try:
                     # Convert the comment's UTC timestamp to a date
                     comment_datetime = datetime.utcfromtimestamp(comment.created_utc)
@@ -47,6 +48,7 @@ def fetch_comments_today(keywords, subreddits, limit=5, comment_limit=10):
                     # Log any errors while parsing the comment
                     print(f"Error processing comment ID {comment.id if 'id' in dir(comment) else 'unknown'}: {e}")
     return results
+
 
 if __name__ == "__main__":
     # Define keywords and target subreddits
