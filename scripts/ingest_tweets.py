@@ -25,12 +25,15 @@ def fetch_tweets():
 
 def save_tweets(tweets):
     if not tweets:
-        print("No tweets fetched. raw_tweets.json will not be updated.")
-        return
+        print("No tweets fetched. raw_tweets.json will not be created.")
+        return False  # Indicate the file was not created
     with open("raw_tweets.json", "w") as f:
         json.dump(tweets, f, indent=4)
     print(f"{len(tweets)} tweets saved to raw_tweets.json.")
+    return True  # Indicate the file was created
 
 if __name__ == "__main__":
     tweets = fetch_tweets()
-    save_tweets(tweets)
+    file_created = save_tweets(tweets)
+    if not file_created:
+        print("Skipping further processing since no data was saved.")
